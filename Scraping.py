@@ -14,14 +14,14 @@ def scrape_all():
     # Since these are pairs 
     news_title, news_paragraph= mars_news(browser)
     hemisphere_image_urls=hemisphere(browser)
-    
+
     # Run all scraping functions and store results in dictionary 
     data={
         "news_title": news_title,
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "hemispheres": hemisphere_image_urls,
+        "hemispheres": hemisphere_image_urls(browser),
         "last_modified": dt.datetime.now()
     }
 
@@ -74,7 +74,7 @@ def featured_image(browser):
     browser.visit(url)
 
     # Find and click the full_image button
-    full_image_elem= browser.find_by_id('full_image')[0]
+    full_image_elem= browser.find_by_tag('button')[1]
     full_image_elem.click()
 
     # Find the more info button and click that 
@@ -92,9 +92,6 @@ def featured_image(browser):
     # Add try/except for error handling
     try:
         # Find the relative image url 
-        # The 'figure.lede' references the <figure /> tag and its class=lede
-        # the 'a' is the next tag nested inside the <figure /> tag, as well as the 'img' tag 
-        # the .get('src') pulls the link to the image
 
         # WE are telling soup to go to figure tag, then within that look for an 'a' tag then within that look for a 'img' tag
         img_url_rel= img_soup.select_one('figure.lede a img').get("src")
@@ -133,30 +130,36 @@ def mars_facts():
 def hemisphere(browser):
     url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
     browser.visit(url)
+    
+    try:
+
+        hemisphere_image_urls = []
+
+    # imgs_links= browser.find_by_css("a.product-item h3")
+
+        for x in range(3):
+            hemisphere={}
+
+            # Find elements going to click link 
+            browser.find_by_css("a.product-item h3")[x].click()
+
+            # Find sample Image link
+            sample_img= browser.links.find_by_partial_text("Sample").first
+            hemisphere['img_url']=sample_img['href']
+
+            # Get hemisphere Title
+            hemisphere['title']=browser.find_by_css("h2.title").text
+
+            #Add Objects to hemisphere_img_urls list
+            hemisphere_image_urls.append(hemisphere)
+
+            # Go Back
+            browser.back()
 
 
-    hemisphere_image_urls = []
+    except BaseException: 
+        return None
 
-    imgs_links= browser.find_by_css("a.product-item h3")
-
-    for x in range(len(imgs_links)):
-        hemisphere={}
-
-        # Find elements going to click link 
-        browser.find_by_css("a.product-item h3")[x].click()
-
-        # Find sample Image link
-        sample_img= browser.find_link_by_text("Sample").first
-        hemisphere['img_url']=sample_img['href']
-
-        # Get hemisphere Title
-        hemisphere['title']=browser.find_by_css("h2.title").text
-
-        #Add Objects to hemisphere_img_urls list
-        hemisphere_image_urls.append(hemisphere)
-
-        # Go Back
-        browser.back()
     return hemisphere_image_urls
 
 if __name__== "__main__":

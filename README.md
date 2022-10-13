@@ -15,3 +15,5 @@ Software/Libraries: Visual Studio Code 1.56.0, jupyter Notebook 6.3.0, Jupyter l
 ## Project Results
 The results for the scraped hemisphere images and urls are shown below:
 ![img_urls](/Resources/img_urls.png)
+
+I ran into problems executing the code to scrape the images and add them to the website for Robin. I am still in the process of trouble shooting; I believe my code is correct and it was once running without errors but I am now having trouble with my path system in regards to Google Chrome web driver. If there is any feedback regarding this issue or my code in other areas I would appreciate it.

@@ -1,6 +1,6 @@
 
 # Import Flask, PyMongo, and scraping.py 
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask_pymongo import PyMongo
 import scraping
 
@@ -21,8 +21,8 @@ def scrape():
     mars=mongo.db.mars
     #holds newly scraped data, referencing scrape_all() function in scraping.py file
     mars_data=scraping.scrape_all()
-    mars.update({},mars_data,upsert=True)
-    return "Scraping Successful"
+    mars.update_one({},{"$set":mars_data},upsert=True)
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

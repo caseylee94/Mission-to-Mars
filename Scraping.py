@@ -21,7 +21,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "hemispheres": hemisphere_image_urls(browser),
+        "hemispheres": hemisphere_image_urls,
         "last_modified": dt.datetime.now()
     }
 
@@ -70,7 +70,8 @@ def mars_news(browser):
 def featured_image(browser):
 
     # Visit URL 
-    url= 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mar'
+    url = 'https://spaceimages-mars.com'
+    # url= 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mar'
     browser.visit(url)
 
     # Find and click the full_image button
@@ -79,27 +80,33 @@ def featured_image(browser):
 
     # Find the more info button and click that 
     # is_element_present_by_text() method to search for an element that has the provided text
-    browser.is_element_present_by_text('more info', wait_time=1)
+   # browser.is_element_present_by_text('more info', wait_time=1)
 
     # will take our string 'more info' and add link associated with it, then click
-    more_info_elem=browser.links.find_by_partial_text('more info')
-    more_info_elem.click()
+    # more_info_elem=browser.links.find_by_partial_text('more info')
+    # more_info_elem.click()
 
     # Parse the resulting html with soup
     html=browser.html
     img_soup=soup(html, 'html.parser')
 
-    # Add try/except for error handling
-    try:
-        # Find the relative image url 
+    # find the relative image url
+    img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
 
-        # WE are telling soup to go to figure tag, then within that look for an 'a' tag then within that look for a 'img' tag
-        img_url_rel= img_soup.select_one('figure.lede a img').get("src")
+    # Use the base url to create an absolute url
+    img_url = f'https://spaceimages-mars.com/{img_url_rel}'
+
+    # Add try/except for error handling
+    # try:
+    #     # Find the relative image url 
+
+    #     # WE are telling soup to go to figure tag, then within that look for an 'a' tag then within that look for a 'img' tag
+    #     img_url_rel= img_soup.select_one('figure.lede a img').get("src")
     
-    except AttributeError:
-        return None
-    # Need to get the FULL URL: Only had relative path before
-    img_url= f'https://www.jpl.nasa.gov{img_url_rel}'
+    # except AttributeError:
+    #     return None
+    # # Need to get the FULL URL: Only had relative path before
+    # img_url= f'https://www.jpl.nasa.gov{img_url_rel}'
 
     return img_url
 
@@ -137,7 +144,7 @@ def hemisphere(browser):
 
     # imgs_links= browser.find_by_css("a.product-item h3")
 
-        for x in range(3):
+        for x in range(4):
             hemisphere={}
 
             # Find elements going to click link 

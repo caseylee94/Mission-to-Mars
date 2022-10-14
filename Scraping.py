@@ -97,16 +97,16 @@ def featured_image(browser):
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
 
     # Add try/except for error handling
-    # try:
-    #     # Find the relative image url 
+    try:
+        # Find the relative image url 
 
-    #     # WE are telling soup to go to figure tag, then within that look for an 'a' tag then within that look for a 'img' tag
-    #     img_url_rel= img_soup.select_one('figure.lede a img').get("src")
+        # WE are telling soup to go to figure tag, then within that look for an 'a' tag then within that look for a 'img' tag
+        img_url_rel= img_soup.select_one('figure.lede a img').get("src")
     
-    # except AttributeError:
-    #     return None
-    # # Need to get the FULL URL: Only had relative path before
-    # img_url= f'https://www.jpl.nasa.gov{img_url_rel}'
+    except AttributeError:
+        return None
+    # Need to get the FULL URL: Only had relative path before
+    img_url= f'https://www.jpl.nasa.gov{img_url_rel}'
 
     return img_url
 
